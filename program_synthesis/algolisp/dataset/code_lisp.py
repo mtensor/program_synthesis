@@ -5,6 +5,7 @@ import six
 import functools
 
 from program_synthesis.algolisp.dataset.code_types import *
+import traceback
 
 
 class ArgType(object):
@@ -531,8 +532,9 @@ def compile_statement(lisp_units, short_tree, argument_map=None, context=None, t
                     return ret
                     
                 except TypeError as e:
-                    print("TypeError %s calling %s, arguments: %s. Program: %s" % (
-                        str(e), func, values, statement))
+                    traceback.clear_frames(e.__traceback__)
+                    # print("TypeError %s calling %s, arguments: %s. Program: %s" % (
+                    #     str(e), func, values, statement))
                     raise
             ret = call_unit
             ret._original_lisp_code = statement
@@ -692,8 +694,9 @@ def test_lisp_validity(lisp_units, short_tree, args_map, root_type, constants = 
                     try:
                         tp = arg(root_type, args)
                     except:
-                        print("Error while executing: %s, arg: %s, root_type: %s, args: %s" % (
-                            short_tree, arg, root_type, args))
+                        traceback.clear_frames(e.__traceback__)
+                        # print("Error while executing: %s, arg: %s, root_type: %s, args: %s" % (
+                        #     short_tree, arg, root_type, args))
                         raise
                 else:
                     tp = arg

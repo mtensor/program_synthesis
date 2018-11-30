@@ -70,14 +70,17 @@ def evaluate_code(code, arguments, tests, executor_):
         try:
             execution_result = executor_.execute(code, arguments, test['input'])
         except ExecutorSyntaxException as e:
+            traceback.clear_frames(e.__traceback__)
             stats['syntax-error'] += 1
             stats['exceptions'].append(str(e))
             continue
         except ExecutorRuntimeException as e:
+            traceback.clear_frames(e.__traceback__)
             stats['runtime-exception'] += 1
             stats['exceptions'].append(str(e))
             continue
         except Exception as e:
+            traceback.clear_frames(e.__traceback__)
             #print("Exception: %s" % e)
             #traceback.print_exc()
             #print(code, arguments, test['input'])

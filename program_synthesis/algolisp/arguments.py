@@ -15,7 +15,7 @@ def get_arg_parser(title, mode):
     parser.add_argument('--dataset_bucketing', action='store_true', default=False)
     # The larger this value the more aggressive the bucketing is, but the content of the buckets is less randomized.
     parser.add_argument('--dataset_macrobucket_size', type=int, default=100)
-    parser.add_argument('--vocab_min_freq', type=int, default=50)
+    parser.add_argument('--vocab_min_freq', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=32)
     # If true will keep the entire dataset in memory.
     parser.add_argument('--dataset_load_in_ram', action='store_true', default=False)
