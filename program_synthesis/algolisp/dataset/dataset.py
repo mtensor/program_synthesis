@@ -356,42 +356,42 @@ class NearDataset(object):
         return self.iterator.__len__()
 
 
-def get_metagen_dataset(args):
+def get_metagen_dataset(args,shuffle=True):
     args.code_vocab = args.word_vocab = _basepath('data/generated/word.vocab')
     train_data = NearDataset(
         _basepath('data/generated/metaset3.train.jsonl'),
-        args, shuffle=True, max_code_length=getattr(args, 'dataset_max_code_length', 0),
+        args, shuffle=shuffle, max_code_length=getattr(args, 'dataset_max_code_length', 0),
         filter_code_length=getattr(args, 'dataset_filter_code_length', 0),
         is_training=True)
     if not os.path.exists(args.word_vocab):
         data.save_vocab(args.word_vocab, train_data.build_vocab(min_freq=args.vocab_min_freq))
     dev_data = NearDataset(
         _basepath('data/generated/metaset3.dev.jsonl'),
-        args, shuffle=False,
+        args, shuffle=shuffle,
         is_training=False)
     return train_data, dev_data
 
 
-def get_metagen_eval_dataset(args):
+def get_metagen_eval_dataset(args, shuffle=True):
     args.code_vocab = args.word_vocab = _basepath('data/generated/word.vocab')
     return NearDataset(
-        _basepath('data/generated/metaset3.dev.jsonl'),
-        args, shuffle=True,
+        _basepath('data/generated/metaset3.test.jsonl'),
+        args, shuffle=shuffle,
         is_training=False)
 
 
-def get_dataset(args):
+def get_dataset(args, shuffle=False):
     if args.dataset == 'metagen':
-        return get_metagen_dataset(args)
+        return get_metagen_dataset(args, shuffle=shuffle)
     else:
         raise ValueError("Unknown dataset %s" % args.dataset)
 
 
-def get_eval_dataset(args):
+def get_eval_dataset(args, shuffle=False):
     if args.dataset == 'handcrafted':
         return get_metagen_handcrafted_dataset(args)
     elif args.dataset == 'metagen':
-        return get_metagen_eval_dataset(args)
+        return get_metagen_eval_dataset(args, shuffle=shuffle)
     else:
         raise ValueError("Unknown dataset %s" % args.dataset)
 
