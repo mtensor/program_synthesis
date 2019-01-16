@@ -7,6 +7,11 @@ from program_synthesis.algolisp.dataset import code_trace
 from program_synthesis.algolisp.dataset import code_types
 from program_synthesis.algolisp.dataset import data
 
+import sys
+import os
+sys.path.append(os.path.abspath('./'))
+sys.path.append(os.path.abspath('./ec'))
+from task import EvaluationTimeout
 
 ExecutionResult = collections.namedtuple('ExecutionResult', ['result', 'trace'])
 
@@ -38,6 +43,8 @@ class LispExecutor(object):
         if data.is_flat_code(code):
             try:
                 code, _ = data.unflatten_code(code, 'lisp')
+            except EvaluationTimeout:
+                raise EvaluationTimeout()
             except:
                 return ExecutionResult(None, None)
         try:
@@ -53,6 +60,9 @@ class LispExecutor(object):
             trace=t)
         try:
             result = func(*[inputs[arg] for arg, _ in arguments])
+
+        except EvaluationTimeout:
+            raise EvaluationTimeout()
         except Exception:
             raise ExecutorRuntimeException()
         return ExecutionResult(result, t)
@@ -69,6 +79,9 @@ def evaluate_code(code, arguments, tests, executor_):
     for test in tests:
         try:
             execution_result = executor_.execute(code, arguments, test['input'])
+
+        except EvaluationTimeout:
+            raise EvaluationTimeout()
         except ExecutorSyntaxException as e:
             traceback.clear_frames(e.__traceback__)
             stats['syntax-error'] += 1

@@ -7,6 +7,11 @@ import functools
 from program_synthesis.algolisp.dataset.code_types import *
 import traceback
 
+import sys
+import os
+sys.path.append(os.path.abspath('./'))
+sys.path.append(os.path.abspath('./ec'))
+from task import EvaluationTimeout
 
 class ArgType(object):
 
@@ -491,14 +496,20 @@ def compile_statement(lisp_units, short_tree, argument_map=None, context=None, t
                     if use_cache:
                         try:
                             cache_key1 = lists_to_tuples(statement)
+                        except EvaluationTimeout:
+                            raise EvaluationTimeout()
                         except Exception as e:
                             use_cache = False
                         try:
                             cache_key2 = lists_to_tuples(arg_values)
+                        except EvaluationTimeout:
+                            raise EvaluationTimeout()
                         except Exception as e:
                             use_cache = False
                         try:
                             cache_key3 = lists_to_tuples(argument_map)
+                        except EvaluationTimeout:
+                            raise EvaluationTimeout()
                         except Exception as e:
                             use_cache = False
 
@@ -693,6 +704,8 @@ def test_lisp_validity(lisp_units, short_tree, args_map, root_type, constants = 
                 if callable(arg):
                     try:
                         tp = arg(root_type, args)
+                    except EvaluationTimeout:
+                        raise EvaluationTimeout()
                     except:
                         traceback.clear_frames(e.__traceback__)
                         # print("Error while executing: %s, arg: %s, root_type: %s, args: %s" % (

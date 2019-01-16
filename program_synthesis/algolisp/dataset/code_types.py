@@ -16,6 +16,8 @@ class Type(Node):
                         all([their.compatible(mine) 
                             for (mine, their) in 
                             zip(self.argument_types, other_type.argument_types)]))))
+            except EvaluationTimeout:
+                raise EvaluationTimeout()
             except:
                 print("Exception while comparing types: %s and %s" % (self, other_type))
                 raise
